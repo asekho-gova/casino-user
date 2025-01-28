@@ -7,5 +7,6 @@ namespace Casino.User.Api.Persistence
         Task<CasinoUser?> GetUserAsync(int userId);
         Task<int> CreateUserAsync(CreateUserRequest request);
         Task UpdateBalanceAsync(UpdateBalanceResponse response);
+        Task<IUserTransaction> BeginTransactionAsync();
     }
 }

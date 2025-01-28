@@ -12,6 +12,13 @@ public class DatabaseService : IDatabaseService
     _commandProvider = commandProvider;
   }
 
+  public async Task<IUserTransaction> BeginTransactionAsync()
+  {
+    var connection = _commandProvider.Open();
+    var transaction = connection.BeginTransaction();
+    return new UserTransaction(transaction);
+  }
+
   public async Task<int> CreateUserAsync(CreateUserRequest request)
   {
     using var connection = _commandProvider.Open();
@@ -76,7 +83,15 @@ public class DatabaseService : IDatabaseService
         return;
       }
 
-      const string updateUserSql = "UPDATE tb_Users SET Balance = Balance + @UpdateAmount WHERE UserId = @UserId; SELECT Balance FROM tb_Users WHERE UserId = @UserId";
+      const string updateUserSql = @"
+        UPDATE tb_Users 
+        SET Balance = Balance + @UpdateAmount 
+        WHERE UserId = @UserId 
+          AND Balance + @UpdateAmount >= 0;
+        
+        SELECT Balance 
+        FROM tb_Users 
+        WHERE UserId = @UserId;";
       var balance = await connection.ExecuteScalarAsync<decimal?>(updateUserSql, response);
 
       response.Balance = balance.Value;
@@ -92,16 +107,15 @@ public class DatabaseService : IDatabaseService
       }
 
       transaction.Commit();
+      response.Status = HttpStatusCode.OK;
+      response.Message = "Balance updated successfully.";
     }
     catch (Exception ex)
     {
       response.Status = HttpStatusCode.InternalServerError;
-      response.Message = ex.Message;
+      response.Message = "An error occurred while updating the balance.";
       transaction.Rollback();
     }
-
-    response.Status = HttpStatusCode.OK;
-    response.Message = "Balance updated successfully.";
   }
 
   private static async Task<CasinoUser?> GetUserAsync(int userId, IUserConnection connection)

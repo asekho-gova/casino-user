@@ -29,9 +29,9 @@ namespace Casino.User.Api.Controllers
 
         return Ok(user);
       }
-      catch (Exception ex)
+      catch (Exception)
       {
-        return StatusCode(201, $"An error occurred while getting the user. {ex.Message}");
+        return StatusCode(500, "An error occurred while processing your request.");
       }
     }
 
@@ -52,9 +52,9 @@ namespace Casino.User.Api.Controllers
       {
         return BadRequest(ex.Message);
       }
-      catch (Exception ex)
+      catch (Exception)
       {
-        return StatusCode(500, $"An error occurred while creating the user. {ex.Message}");
+        return StatusCode(500, "An error occurred while processing your request.");
       }
     }
 
@@ -67,9 +67,9 @@ namespace Casino.User.Api.Controllers
         
         return StatusCode((int)response.Status, response);
       }
-      catch (Exception ex)
+      catch (Exception)
       {
-        return StatusCode(500, $"An error occurred while updating the balance. {ex.Message}");
+        return StatusCode(500, "An error occurred while processing your request.");
       }
     }
   }
