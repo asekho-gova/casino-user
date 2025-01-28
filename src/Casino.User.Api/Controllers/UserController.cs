@@ -72,5 +72,23 @@ namespace Casino.User.Api.Controllers
         return StatusCode(500, "An error occurred while processing your request.");
       }
     }
+
+    [HttpDelete("{userId}")]
+    public async Task<IActionResult> DeleteUserAsync(int userId)
+    {
+      try
+      {
+        var deleted = await _userService.DeleteUserAsync(userId);
+        if (!deleted)
+        {
+          return NotFound($"User with ID {userId} does not exist.");
+        }
+        return NoContent();
+      }
+      catch (Exception)
+      {
+        return StatusCode(500, "An error occurred while processing your request.");
+      }
+    }
   }
 }
