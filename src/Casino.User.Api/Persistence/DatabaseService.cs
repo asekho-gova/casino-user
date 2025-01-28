@@ -25,14 +25,16 @@ public class DatabaseService : IDatabaseService
     const string sql = @"
             INSERT INTO tb_Users (
                 Username, 
-                Password, 
+                Password,
+                Salt,
                 Email, 
                 HomePhoneNumber, 
                 WorkPhoneNumber, 
                 MobilePhoneNumber
             ) VALUES (
                 @Username, 
-                @HashedPassword, 
+                @HashedPassword,
+                @Salt,
                 @Email, 
                 @HomePhoneNumber, 
                 @WorkPhoneNumber, 

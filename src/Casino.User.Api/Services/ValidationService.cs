@@ -147,6 +147,7 @@ namespace Casino.User.Api.Services
     public static void HashPassword(CreateUserRequest request)
     {
       var salt = RandomNumberGenerator.GetBytes(128 / 8);
+      request.Salt = Convert.ToBase64String(salt);
 
       var hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
           password: request.Password!,
