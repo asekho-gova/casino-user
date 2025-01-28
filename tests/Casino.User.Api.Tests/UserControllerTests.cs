@@ -4,7 +4,6 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using Casino.User.Api;
 using Casino.User.Api.Models;
-using FluentAssertions;
 using System.Net;
 using Microsoft.Extensions.DependencyInjection;
 using Casino.User.Api.Services;
@@ -73,18 +72,18 @@ namespace Casino.User.Api.Tests
         public async Task GetUser_WhenUserExists_ReturnsOkWithUser()
         {
             var response = await _client.GetAsync("/api/user/1");
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             
             var user = await response.Content.ReadFromJsonAsync<CasinoUser>();
-            user.Should().NotBeNull();
-            user!.UserId.Should().Be(1);
+            Assert.NotNull(user);
+            Assert.That(user!.UserId, Is.EqualTo(1));
         }
 
         [Test]
         public async Task GetUser_WhenUserDoesNotExist_ReturnsNotFound()
         {
             var response = await _client.GetAsync("/api/user/999");
-            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
         }
 
         [Test]
@@ -99,13 +98,13 @@ namespace Casino.User.Api.Tests
             };
 
             var response = await _client.PostAsJsonAsync("/api/user", newUser);
-            response.StatusCode.Should().Be(HttpStatusCode.Created);
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Created));
             
             var createdUser = await response.Content.ReadFromJsonAsync<CasinoUser>();
-            createdUser.Should().NotBeNull();
-            createdUser!.Username.Should().Be(newUser.Username);
-            createdUser.Email.Should().Be(newUser.Email);
-            createdUser.MobilePhoneNumber.Should().Be(newUser.MobilePhoneNumber);
+            Assert.NotNull(createdUser);
+            Assert.That(createdUser!.Username, Is.EqualTo(newUser.Username));
+            Assert.That(createdUser.Email, Is.EqualTo(newUser.Email));
+            Assert.That(createdUser.MobilePhoneNumber, Is.EqualTo(newUser.MobilePhoneNumber));
         }
 
         [Test]
@@ -119,48 +118,48 @@ namespace Casino.User.Api.Tests
             };
 
             var response = await _client.PostAsJsonAsync("/api/user", invalidUser);
-            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
         }
 
         [Test]
         public async Task UpdateBalance_WithValidAmount_ReturnsOkWithUpdatedBalance()
         {
             var response = await _client.PostAsync("/api/user/1/updateBalance?amount=100", null);
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             
             var result = await response.Content.ReadFromJsonAsync<UpdateBalanceResponse>();
-            result.Should().NotBeNull();
-            result!.UserId.Should().Be(1);
-            result.UpdateAmount.Should().Be(100);
+            Assert.NotNull(result);
+            Assert.That(result!.UserId, Is.EqualTo(1));
+            Assert.That(result.UpdateAmount, Is.EqualTo(100));
             
             var userResponse = await _client.GetAsync("/api/user/1");
             var user = await userResponse.Content.ReadFromJsonAsync<CasinoUser>();
-            user.Should().NotBeNull();
-            user!.Balance.Should().Be(result.Balance);
+            Assert.NotNull(user);
+            Assert.That(user!.Balance, Is.EqualTo(result.Balance));
         }
 
         [Test]
         public async Task UpdateBalance_WithInvalidUserId_ReturnsBadRequest()
         {
             var response = await _client.PostAsync("/api/user/999/updateBalance?amount=100", null);
-            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
         }
 
         [Test]
         public async Task DeleteUser_WhenUserExists_ReturnsNoContent()
         {
             var response = await _client.DeleteAsync("/api/user/2");
-            response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
             
             var getResponse = await _client.GetAsync("/api/user/2");
-            getResponse.StatusCode.Should().Be(HttpStatusCode.NotFound);
+            Assert.That(getResponse.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
         }
 
         [Test]
         public async Task DeleteUser_WhenUserDoesNotExist_ReturnsNotFound()
         {
             var response = await _client.DeleteAsync("/api/user/999");
-            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
         }
     }
 }
