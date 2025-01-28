@@ -69,7 +69,18 @@ namespace Casino.User.Api.Services
           return response;
         }
 
-        await _databaseContext.UpdateBalanceAsync(response);
+        using (var transaction = await _databaseContext.BeginTransactionAsync())
+        {
+          await _databaseContext.UpdateBalanceAsync(response);
+          if (response.Status == HttpStatusCode.OK)
+          {
+            transaction.Commit();
+          }
+          else
+          {
+            transaction.Rollback();
+          }
+        }
       }
       catch (Exception ex)
       {

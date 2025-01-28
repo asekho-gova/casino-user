@@ -30,7 +30,7 @@ namespace Casino.User.Api.Services
         return "Email is not in a valid format.";
       }
 
-      if (IsAtLeastOnePhoneNumberSupplied(request))
+      if (!IsAtLeastOnePhoneNumberSupplied(request))
       {
         return "At least one phone number is required.";
       }
@@ -55,9 +55,9 @@ namespace Casino.User.Api.Services
 
     private static bool IsAtLeastOnePhoneNumberSupplied(CreateUserRequest request)
     {
-      return string.IsNullOrWhiteSpace(request.HomePhoneNumber) &&
-             string.IsNullOrWhiteSpace(request.WorkPhoneNumber) &&
-             string.IsNullOrWhiteSpace(request.MobilePhoneNumber);
+      return !string.IsNullOrWhiteSpace(request.HomePhoneNumber) ||
+             !string.IsNullOrWhiteSpace(request.WorkPhoneNumber) ||
+             !string.IsNullOrWhiteSpace(request.MobilePhoneNumber);
     }
 
     private static bool IsValidEmail(string email)
@@ -120,7 +120,7 @@ namespace Casino.User.Api.Services
         return true;
       }
 
-      var phoneRegex = new Regex(@"^\+?[0-9a]\d{6,14}$", RegexOptions.None, TimeSpan.FromMilliseconds(100));
+      var phoneRegex = new Regex(@"^\+?\d{6,14}$", RegexOptions.None, TimeSpan.FromMilliseconds(100));
       return phoneRegex.IsMatch(phoneNumber);
     }
 
@@ -147,6 +147,7 @@ namespace Casino.User.Api.Services
     public static void HashPassword(CreateUserRequest request)
     {
       var salt = RandomNumberGenerator.GetBytes(128 / 8);
+      request.Salt = Convert.ToBase64String(salt);
 
       var hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
           password: request.Password!,
