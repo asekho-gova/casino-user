@@ -90,5 +90,33 @@ namespace Casino.User.Api.Services
 
       return response;
     }
+
+    public async Task<bool> DeleteUserAsync(int userId)
+    {
+      var validUser = _validationService.ValidateUserId(userId);
+      if (!validUser)
+      {
+        return false;
+      }
+
+      try
+      {
+        using (var transaction = await _databaseContext.BeginTransactionAsync())
+        {
+          var result = await _databaseContext.DeleteUserAsync(userId);
+          if (result)
+          {
+            transaction.Commit();
+            return true;
+          }
+          transaction.Rollback();
+          return false;
+        }
+      }
+      catch
+      {
+        return false;
+      }
+    }
   }
 }

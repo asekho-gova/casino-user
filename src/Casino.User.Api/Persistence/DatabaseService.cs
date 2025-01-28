@@ -129,4 +129,14 @@ public class DatabaseService : IDatabaseService
 
     return user;
   }
+
+  public async Task<bool> DeleteUserAsync(int userId)
+  {
+    using var connection = _commandProvider.Open();
+    const string sql = "DELETE FROM tb_Users WHERE UserId = @UserId";
+    var parameters = new { UserId = userId };
+
+    var rowsAffected = await connection.ExecuteAsync(sql, parameters);
+    return rowsAffected > 0;
+  }
 }

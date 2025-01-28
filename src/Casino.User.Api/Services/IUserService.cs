@@ -7,5 +7,6 @@ namespace Casino.User.Api.Services
     Task<CasinoUser?> GetUserAsync(int userId);
     Task<CasinoUser?> CreateUserAsync(CreateUserRequest request);
     Task<UpdateBalanceResponse> UpdateBalanceAsync(int userId, decimal amount);
+    Task<bool> DeleteUserAsync(int userId);
   }
 }

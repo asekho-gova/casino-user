@@ -8,5 +8,6 @@ namespace Casino.User.Api.Persistence
         Task<int> CreateUserAsync(CreateUserRequest request);
         Task UpdateBalanceAsync(UpdateBalanceResponse response);
         Task<IUserTransaction> BeginTransactionAsync();
+        Task<bool> DeleteUserAsync(int userId);
     }
 }
