@@ -28,7 +28,7 @@ namespace Casino.User.Api.Tests
             {
                 File.Delete(_dbPath);
             }
-            File.Copy("../../../src/Casino.User.Api/casinoUsers.db", _dbPath);
+            File.Copy("../../../../../src/Casino.User.Api/casinoUsers.db", _dbPath);
 
             _factory = new WebApplicationFactory<Program>()
                 .WithWebHostBuilder(builder =>
@@ -40,7 +40,7 @@ namespace Casino.User.Api.Tests
                         {
                             services.Remove(descriptor);
                         }
-                        services.AddSingleton<IConnectionProvider>(new ConnectionProvider(_dbPath));
+                        services.AddSingleton<IConnectionProvider>(new ConnectionProvider());
                     });
                 });
 
@@ -65,7 +65,7 @@ namespace Casino.User.Api.Tests
             {
                 File.Delete(_dbPath);
             }
-            File.Copy("../../../src/Casino.User.Api/casinoUsers.db", _dbPath);
+            File.Copy("../../../../../src/Casino.User.Api/casinoUsers.db", _dbPath);
         }
 
         [Test]

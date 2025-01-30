@@ -16,7 +16,7 @@ public class DatabaseService : IDatabaseService
   {
     var connection = _commandProvider.Open();
     var transaction = connection.BeginTransaction();
-    return new UserTransaction(transaction);
+    return new UserTransaction((System.Data.IDbTransaction)transaction);
   }
 
   public async Task<int> CreateUserAsync(CreateUserRequest request)
@@ -112,7 +112,7 @@ public class DatabaseService : IDatabaseService
       response.Status = HttpStatusCode.OK;
       response.Message = "Balance updated successfully.";
     }
-    catch (Exception ex)
+    catch (Exception)
     {
       response.Status = HttpStatusCode.InternalServerError;
       response.Message = "An error occurred while updating the balance.";
